@@ -1,11 +1,26 @@
 from flask import Flask, render_template, request, jsonify
 import subprocess
+import os
 
 app = Flask(__name__)
 
 @app.route('/')
 def index():
     return render_template('index.html')
+    
+@app.route('/home',methods=['POST'])	
+def upload_file():
+	uploaded_file = request.files['file']
+	if uploaded_file.filename != '':
+		upload_dir = 'Image'
+		os.makedirs(upload_dir, exist_ok=True)
+		file_address = os.path.join(upload_dir,uploaded_file.filename)
+		uploaded_file.save(file_address)
+		with open('file_address.txt','w') as file:
+			file.write(file_address)
+			return 'File uploaded successfully!'
+	else:
+		return 'No file selected'
 
 @app.route('/execute', methods=['POST'])
 def execute():
