@@ -77,6 +77,25 @@ def execute():
         except subprocess.CalledProcessError as e:
             # Handle errors here, for example:
             return jsonify(error="An error occurred during fsstat execution.")
+            
+    if action == 'stringsearch':
+        searchString = request.form['searchString']
+        offset = request.form['offset']
+
+        try:
+            # Compile and execute stringsearch tool
+            command = ['gcc', 'stringsearch.c', '-o', 'stringsearch']
+            subprocess.run(command)
+
+            # Execute the stringsearch program with offset and searchString as arguments
+            output = subprocess.check_output(['./stringsearch', offset, searchString], stderr=subprocess.STDOUT, text=True)
+
+            # Wrap the output in <pre> tags and replace newlines with <br> tags
+            output = '<pre>' + output.replace('\n', '<br>') + '</pre>'
+        except subprocess.CalledProcessError as e:
+            # Handle errors here, for example:
+            return jsonify(error="An error occurred during stringsearch execution.")
+
 
     print(type(output))
     return output
