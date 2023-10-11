@@ -7,10 +7,23 @@
 </head>
 <body>
     <h1>Forensic Tool</h1>
+    
+    <form id="file-upload-form" action="/home" method="POST" enctype="multipart/form-data">
+     	<input type="file" name="file" accept=".dd, .raw">
+        <button type="submit" id="file-upload-button">Upload File</button>
+    </form>
+
+    <!-- Banner to show file upload confirmation -->
+    <div id="upload-banner" style="display: none;">
+        File uploaded successfully!
+    </div>
+
+    
     <form id="image-info-form" action="/execute" method="POST">
         <input type="hidden" name="action" value="img_stat">
         <button type="submit" id="image-info-button">Image Information</button>
     </form>
+    
 
     <form id="partition-info-form" action="/execute" method="POST">
         <input type="hidden" name="action" value="mmls">
@@ -57,16 +70,47 @@
             const homeButton = document.getElementById('home-button');
             
             const outputContainer = document.getElementById('output-container');
+            const uploadBanner = document.getElementById('upload-banner');
             
             const imageInfoForm = document.getElementById('image-info-form');
             const partitionInfoForm = document.getElementById('partition-info-form');
             const flsForm = document.getElementById('fls-form');
             const fsstatForm = document.getElementById('fsstat-form');
             const stringsearchForm = document.getElementById('stringsearch-form');
+            
+            function displayUploadBanner() {
+                uploadBanner.style.display = 'block';
+                setTimeout(function() {
+                    uploadBanner.style.display = 'none';
+                }, 5000); // Hide the banner after 5 seconds (you can adjust the duration).
+            }
 
             function displayOutput(output) {
                 outputContainer.innerHTML = output;
             }
+            
+            const fileUploadForm = document.getElementById('file-upload-form');
+		fileUploadForm.addEventListener('submit', async function (event) {
+		    event.preventDefault(); // Prevent the default form submission
+		    const formData = new FormData(fileUploadForm);
+
+		    try {
+			const response = await fetch('/home', {
+			    method: 'POST',
+			    body: formData,
+			});
+
+			if (response.ok) {
+			    // File was successfully uploaded
+			    displayUploadBanner();
+			} else {
+			    // Handle errors here
+			    outputContainer.innerText = 'Error: ' + response.statusText;
+			}
+		    } catch (error) {
+			outputContainer.innerText = 'Error: ' + error.message;
+		    }
+		});
 
             imageInfoForm.addEventListener('submit', function (event) {
                 event.preventDefault(); // Prevent the default form submission
