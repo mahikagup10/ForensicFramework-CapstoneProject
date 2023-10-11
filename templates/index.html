@@ -30,6 +30,16 @@
 	    <input type="text" id="offset" name="offset" required> 
 	    <button type="submit" id="fsstat-button">Files System Information</button>
     </form>
+    
+    <form id="stringsearch-form" action="/execute" method="POST">
+	    <input type="hidden" name="action" value="stringsearch">
+	    <label for="offset">Offset:</label>
+	    <input type="text" id="offset" name="offset" required>
+	    <label for="searchString">Search String:</label>
+	    <input type="text" id="searchString" name="searchString" required>
+	    <button type="submit" id="stringsearch-button">String Search</button>
+    </form>
+
 
 
     <div id="output-container"></div>
@@ -43,6 +53,7 @@
             const partitionInfoButton = document.getElementById('partition-info-button');
             const flsButton = document.getElementById('fls-button');
             const fsstatButton = document.getElementById('fsstat-button');
+            const stringsearchButton = document.getElementById('stringsearch-button');
             const homeButton = document.getElementById('home-button');
             
             const outputContainer = document.getElementById('output-container');
@@ -51,6 +62,7 @@
             const partitionInfoForm = document.getElementById('partition-info-form');
             const flsForm = document.getElementById('fls-form');
             const fsstatForm = document.getElementById('fsstat-form');
+            const stringsearchForm = document.getElementById('stringsearch-form');
 
             function displayOutput(output) {
                 outputContainer.innerHTML = output;
@@ -124,6 +136,22 @@
                 });
             });
 
+	    stringsearchForm.addEventListener('submit', function (event) {
+            	event.preventDefault(); // Prevent the default form submission
+
+            	// Make an AJAX request to execute the stringsearch function
+            	fetch('/execute', {
+                	method: 'POST',
+                	body: new FormData(stringsearchForm),
+            	})
+            	.then(response => response.text())
+            	.then(data => {
+                	displayOutput(data);
+            	})
+            	.catch(error => {
+                	outputContainer.innerText = 'Error: ' + error.message;
+           	 });
+            });
 
             homeButton.addEventListener('click', function () {
                 // Navigate back to the home page ("/")
