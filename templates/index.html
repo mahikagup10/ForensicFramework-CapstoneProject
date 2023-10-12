@@ -57,6 +57,31 @@
 	    <button type="submit" id="jpeg_extract-button">Enter Path of folder for jpeg images to be stored:</button>
     </form>
     
+    <form id="icat-form" action="/execute" method="POST">
+	    <input type="hidden" name="action" value="icat">
+	    <label for="offset">Offset:</label>
+	    <input type="text" id="offset" name="offset" required>
+            <label for="inode">I-node:</label>
+	    <input type="text" id="inode" name="inode" required> 
+	    <button type="submit" id="icat-button">File Content</button>
+    </form>
+    
+    <form id="istat-form" action="/execute" method="POST">
+	    <input type="hidden" name="action" value="istat">
+	    <label for="offset">Offset:</label>
+	    <input type="text" id="offset" name="offset" required>
+            <label for="inode">I-node:</label>
+	    <input type="text" id="inode" name="inode" required> 
+	    <button type="submit" id="istat-button">I-Node Details</button>
+    </form>
+
+    <form id="sorter-form" action="/execute" method="POST">
+	    <input type="hidden" name="action" value="sorter">
+	    <label for="offset">Offset:</label>
+	    <input type="text" id="offset" name="offset" required>
+	    <button type="submit" id="sorter-button">File Categorisation</button>
+    </form>
+    
     <form id="stringsearch-form" action="/execute" method="POST">
 	    <input type="hidden" name="action" value="stringsearch">
 	    <label for="offset">Offset:</label>
@@ -64,6 +89,20 @@
 	    <label for="searchString">Search String:</label>
 	    <input type="text" id="searchString" name="searchString" required>
 	    <button type="submit" id="stringsearch-button">String Search</button>
+    </form>
+    
+    <form id="recover-form" action="/execute" method="POST">
+	    <input type="hidden" name="action" value="recover">
+	    <label for="offset">Offset:</label>
+	    <input type="text" id="offset" name="offset" required>
+	    <label for="dire">Enter File name:</label>
+	    <input type="text" id="dire" name="dire" required>
+	    <button type="submit" id="recover-button">Recover files</button>
+    </form>
+    
+    <form id="printablestrings-form" action="/execute" method="POST">
+        <input type="hidden" name="action" value="srch_strings">
+        <button type="submit" id="printablestrings-button">Printable Strings</button>
     </form>
 
 
@@ -80,7 +119,12 @@
             const fsstatButton = document.getElementById('fsstat-button');
             const ilsButton = document.getElementById('ils-button');
             const jpeg_extractButton = document.getElementById('jpeg_extract-button');
+            const icatButton = document.getElementById('icat-button');
+            const istatButton = document.getElementById('istat-button');
+            const sorterButton = document.getElementById('sorter-button');
             const stringsearchButton = document.getElementById('stringsearch-button');
+            const recoverButton = document.getElementById('recover-button');
+            const printablestringsButton = document.getElementById('printablestrings-button');
             const homeButton = document.getElementById('home-button');
             
             const outputContainer = document.getElementById('output-container');
@@ -92,7 +136,12 @@
             const fsstatForm = document.getElementById('fsstat-form');
             const ilsForm = document.getElementById('ils-form');
             const jpeg_extractForm = document.getElementById('jpeg_extract-form');
+            const icatForm = document.getElementById('icat-form');
+            const istatForm = document.getElementById('istat-form');
+            const sorterForm = document.getElementById('sorter-form');
             const stringsearchForm = document.getElementById('stringsearch-form');
+            const recoverForm = document.getElementById('recover-form');
+            const printablestringsForm = document.getElementById('printablestrings-form');
             
             function displayUploadBanner() {
                 uploadBanner.style.display = 'block';
@@ -231,6 +280,57 @@
                 });
             });
             
+            icatForm.addEventListener('submit', function (event) {
+                event.preventDefault(); // Prevent the default form submission
+
+                // Make an AJAX request to execute the icat function
+                fetch('/execute', {
+                    method: 'POST',
+                    body: new FormData(icatForm),
+                })
+                .then(response => response.text()) // Use text() instead of json()
+                .then(data => {
+                    displayOutput(data);
+                })
+                .catch(error => {
+                    outputContainer.innerText = 'Error: ' + error.message;
+                });
+            });
+
+	    istatForm.addEventListener('submit', function (event) {
+                event.preventDefault(); // Prevent the default form submission
+
+                // Make an AJAX request to execute the istat function
+                fetch('/execute', {
+                    method: 'POST',
+                    body: new FormData(istatForm),
+                })
+                .then(response => response.text()) // Use text() instead of json()
+                .then(data => {
+                    displayOutput(data);
+                })
+                .catch(error => {
+                    outputContainer.innerText = 'Error: ' + error.message;
+                });
+            });
+            
+	    sorterForm.addEventListener('submit', function (event) {
+                event.preventDefault(); // Prevent the default form submission
+                
+                // Make an AJAX request to execute the sorter function
+                fetch('/execute', {
+                    method: 'POST',
+                    body: new FormData(sorterForm),
+                })
+                .then(response => response.text()) // Use text() instead of json()
+                .then(data => {
+                    displayOutput(data);
+                })
+                .catch(error => {
+                    outputContainer.innerText = 'Error: ' + error.message;
+                });
+            });
+            
             stringsearchForm.addEventListener('submit', function (event) {
             	event.preventDefault(); // Prevent the default form submission
 
@@ -246,6 +346,39 @@
             	.catch(error => {
                 	outputContainer.innerText = 'Error: ' + error.message;
            	 });
+            });
+            
+            recoverForm.addEventListener('submit', function (event) {
+            	event.preventDefault(); // Prevent the default form submission
+
+            	// Make an AJAX request to execute the recover function
+            	fetch('/execute', {
+                	method: 'POST',
+                	body: new FormData(recoverForm),
+            	})
+            	.then(response => response.text())
+            	.then(data => {
+                	displayOutput(data);
+            	})
+            	.catch(error => {
+                	outputContainer.innerText = 'Error: ' + error.message;
+           	 });
+            });
+            printablestringsForm.addEventListener('submit', function (event) {
+                event.preventDefault(); // Prevent the default form submission
+
+                // Make an AJAX request to execute the srch_strings function
+                fetch('/execute', {
+                    method: 'POST',
+                    body: new FormData(printablestringsForm),
+                })
+                .then(response => response.text()) // Use text() instead of json()
+                .then(data => {
+                    displayOutput(data);
+                })
+                .catch(error => {
+                    outputContainer.innerText = 'Error: ' + error.message;
+                });
             });
 
 
