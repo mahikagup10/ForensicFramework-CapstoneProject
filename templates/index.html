@@ -21,12 +21,12 @@
     
     <form id="image-info-form" action="/execute" method="POST">
         <input type="hidden" name="action" value="img_stat">
-        <button type="submit" id="image-info-button">Image Information</button>
+        <button type="submit" id="image-info-button">Forensic Image Information</button>
     </form>
 
     <form id="partition-info-form" action="/execute" method="POST">
         <input type="hidden" name="action" value="mmls">
-        <button type="submit" id="partition-info-button">Partition Information</button>
+        <button type="submit" id="partition-info-button">Disk Partition Information</button>
     </form>
 
     <form id="fls-form" action="/execute" method="POST">
@@ -54,7 +54,7 @@
 	    <input type="hidden" name="action" value="jpeg_extract">
 	    <label for="folder">Folder:</label>
 	    <input type="text" id="folder" name="folder" required>
-	    <button type="submit" id="jpeg_extract-button">Enter Path of folder for jpeg images to be stored:</button>
+	    <button type="submit" id="jpeg_extract-button">Enter Path to create folder for jpeg images to be stored:</button>
     </form>
     
     <form id="icat-form" action="/execute" method="POST">
@@ -97,12 +97,12 @@
 	    <input type="text" id="offset" name="offset" required>
 	    <label for="dire">Enter File name:</label>
 	    <input type="text" id="dire" name="dire" required>
-	    <button type="submit" id="recover-button">Recover files</button>
+	    <button type="submit" id="recover-button">Recover folders</button>
     </form>
     
     <form id="printablestrings-form" action="/execute" method="POST">
         <input type="hidden" name="action" value="srch_strings">
-        <button type="submit" id="printablestrings-button">Printable Strings</button>
+        <button type="submit" id="printablestrings-button">View Printable Strings</button>
     </form>
 
 
