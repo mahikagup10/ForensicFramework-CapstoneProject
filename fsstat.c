@@ -1,7 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-char path[] = "/home/mahika/Downloads/CapstoneFramework/Mantooth_raw.dd.raw";
+char path[] = "/home/kali/Downloads/Mantooth_raw.dd.raw";
 
 int fsstat(int offset) {
     	FILE* fpipe;

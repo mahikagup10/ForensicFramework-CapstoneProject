@@ -1,12 +1,13 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-char path[] = "/home/mahika/Downloads/CapstoneFramework/Mantooth_raw.dd.raw";
+char path[] = "/home/kali/Downloads/Mantooth_raw.dd.raw";
 
 int fls(int offset) {
     FILE* fpipe;
     char c = 0;
     char command[256];
+    printf("enteref");
     
     snprintf(command, sizeof(command), "fls -o %d -r %s", offset, path);
     fpipe = (FILE*)popen(command, "r");
