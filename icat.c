@@ -3,16 +3,14 @@
 FILE* file;
 char path[100];
 
-int fsstat(int offset) {
+int icat(int offset, int inode) {
     	FILE* fpipe;
 	char c = 0;
 	char command[256];
-	
 	file = fopen("file_address.txt","r");
 	if(fgets(path,sizeof(path),file) != NULL){
-		snprintf(command, sizeof(command), "fsstat -o %d %s", offset, path);
+		snprintf(command, sizeof(command), "icat -o %d %s %d", offset, path, inode);
 		fpipe = (FILE*)popen(command, "r");
-		
 		if(fpipe==NULL){
 			perror("Error opening pipe");
 			exit(EXIT_FAILURE);
@@ -23,22 +21,22 @@ int fsstat(int offset) {
 		}
 		
 		pclose(fpipe);
-	}
-	fclose(file);
+	}fclose(file);	
 	return EXIT_SUCCESS;
 }
 
 int main(int argc, char* argv[]) {
-    if (argc != 2) {
+    if (argc != 3) {
         printf("Usage: %s <offset>\n", argv[0]);
         return 1;
     }
 
     int offset = atoi(argv[1]);
+    int inode = atoi(argv[2]);
 
     printf("**********************************************************************************************************************\n");
-    printf("Displaying General details of File System:\n");
-    int c = fsstat(offset);
+    printf("Displaying General contents of the file:\n");
+    int c = icat(offset,inode);
     printf("**********************************************************************************************************************\n");
     printf("\n");
     return 0;
