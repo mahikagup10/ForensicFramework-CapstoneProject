@@ -7,10 +7,23 @@
 </head>
 <body>
     <h1>Forensic Tool</h1>
+    
+    <form id="file-upload-form" action="/home" method="POST" enctype="multipart/form-data">
+     	<input type="file" name="file" accept=".dd, .raw">
+        <button type="submit" id="file-upload-button">Upload File</button>
+    </form>
+
+    <!-- Banner to show file upload confirmation -->
+    <div id="upload-banner" style="display: none;">
+        File uploaded successfully!
+    </div>
+
+    
     <form id="image-info-form" action="/execute" method="POST">
         <input type="hidden" name="action" value="img_stat">
         <button type="submit" id="image-info-button">Image Information</button>
     </form>
+    
 
     <form id="partition-info-form" action="/execute" method="POST">
         <input type="hidden" name="action" value="mmls">
@@ -30,6 +43,28 @@
 	    <input type="text" id="offset" name="offset" required> 
 	    <button type="submit" id="fsstat-button">Files System Information</button>
     </form>
+    
+    <form id="stringsearch-form" action="/execute" method="POST">
+	    <input type="hidden" name="action" value="stringsearch">
+	    <label for="offset">Offset:</label>
+	    <input type="text" id="offset" name="offset" required>
+	    <label for="searchString">Search String:</label>
+	    <input type="text" id="searchString" name="searchString" required>
+	    <button type="submit" id="stringsearch-button">String Search</button>
+    </form>
+     <form id="recover-form" action="/execute" method="POST">
+	    <input type="hidden" name="action" value="recover">
+	    <label for="offset">Offset:</label>
+	    <input type="text" id="offset" name="offset" required>
+	    <label for="dire">Enter File name:</label>
+	    <input type="text" id="dire" name="dire" required>
+	    <button type="submit" id="recover-button">Recover files</button>
+    </form>
+    <form id="printablestrings-form" action="/execute" method="POST">
+        <input type="hidden" name="action" value="srch_strings">
+        <button type="submit" id="printablestrings-button">Printable Strings</button>
+    </form>
+
 
 
     <div id="output-container"></div>
@@ -43,18 +78,56 @@
             const partitionInfoButton = document.getElementById('partition-info-button');
             const flsButton = document.getElementById('fls-button');
             const fsstatButton = document.getElementById('fsstat-button');
+            const stringsearchButton = document.getElementById('stringsearch-button');
+            const recoverButton = document.getElementById('recover-button');
+            const printablestringsButton = document.getElementById('printablestrings-button');
             const homeButton = document.getElementById('home-button');
+
             
             const outputContainer = document.getElementById('output-container');
+            const uploadBanner = document.getElementById('upload-banner');
             
             const imageInfoForm = document.getElementById('image-info-form');
             const partitionInfoForm = document.getElementById('partition-info-form');
             const flsForm = document.getElementById('fls-form');
             const fsstatForm = document.getElementById('fsstat-form');
+            const stringsearchForm = document.getElementById('stringsearch-form');
+            const recoverForm = document.getElementById('recover-form');
+            const printablestringsForm = document.getElementById('printablestrings-form');
+            
+            function displayUploadBanner() {
+                uploadBanner.style.display = 'block';
+                setTimeout(function() {
+                    uploadBanner.style.display = 'none';
+                }, 5000); // Hide the banner after 5 seconds (you can adjust the duration).
+            }
 
             function displayOutput(output) {
                 outputContainer.innerHTML = output;
             }
+            
+            const fileUploadForm = document.getElementById('file-upload-form');
+		fileUploadForm.addEventListener('submit', async function (event) {
+		    event.preventDefault(); // Prevent the default form submission
+		    const formData = new FormData(fileUploadForm);
+
+		    try {
+			const response = await fetch('/home', {
+			    method: 'POST',
+			    body: formData,
+			});
+
+			if (response.ok) {
+			    // File was successfully uploaded
+			    displayUploadBanner();
+			} else {
+			    // Handle errors here
+			    outputContainer.innerText = 'Error: ' + response.statusText;
+			}
+		    } catch (error) {
+			outputContainer.innerText = 'Error: ' + error.message;
+		    }
+		});
 
             imageInfoForm.addEventListener('submit', function (event) {
                 event.preventDefault(); // Prevent the default form submission
@@ -124,6 +197,56 @@
                 });
             });
 
+	    stringsearchForm.addEventListener('submit', function (event) {
+            	event.preventDefault(); // Prevent the default form submission
+
+            	// Make an AJAX request to execute the stringsearch function
+            	fetch('/execute', {
+                	method: 'POST',
+                	body: new FormData(stringsearchForm),
+            	})
+            	.then(response => response.text())
+            	.then(data => {
+                	displayOutput(data);
+            	})
+            	.catch(error => {
+                	outputContainer.innerText = 'Error: ' + error.message;
+           	 });
+            });
+             recoverForm.addEventListener('submit', function (event) {
+            	event.preventDefault(); // Prevent the default form submission
+
+            	// Make an AJAX request to execute the recover function
+            	fetch('/execute', {
+                	method: 'POST',
+                	body: new FormData(recoverForm),
+            	})
+            	.then(response => response.text())
+            	.then(data => {
+                	displayOutput(data);
+            	})
+            	.catch(error => {
+                	outputContainer.innerText = 'Error: ' + error.message;
+           	 });
+            });
+            printablestringsForm.addEventListener('submit', function (event) {
+                event.preventDefault(); // Prevent the default form submission
+
+                // Make an AJAX request to execute the srch_strings function
+                fetch('/execute', {
+                    method: 'POST',
+                    body: new FormData(printablestringsForm),
+                })
+                .then(response => response.text()) // Use text() instead of json()
+                .then(data => {
+                    displayOutput(data);
+                })
+                .catch(error => {
+                    outputContainer.innerText = 'Error: ' + error.message;
+                });
+            });
+
+            
 
             homeButton.addEventListener('click', function () {
                 // Navigate back to the home page ("/")
