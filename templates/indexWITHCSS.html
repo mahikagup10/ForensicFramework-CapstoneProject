@@ -4,29 +4,47 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Forensic Tool</title>
-    <style>
+    
+        <style>
         /* Basic styling for the page */
         body {
             font-family: Arial, sans-serif;
             background-color: #f0f0f0;
             text-align: center;
         }
-
-        h1 {
-            color: #333;
+        
+        h3 {
+            color: #491023;
+            font-family: Arial, sans-serif;
+            font-weight: Light;
+            text-align: left;
         }
+        
+        p{
+            text-align: left;
+            color: #180023;
+            font-family: "Times New Roman", Times, serif;
+        }
+        
+        /*.margins{
+        	border: 20px;
+        }*/
 
         /* Style for the buttons */
         form {
             display: inline-block;
-            margin: 10px;
+            margin: 5px;
+        }
+        
+        label{
+            color:#180023;
         }
 
         button {
-            padding: 10px 20px;
+            padding: 5px 15px;
             font-size: 16px;
-            background-color: #007bff;
-            color: #fff;
+            background-color: #1877F2;
+            color: #FFFF00;
             border: none;
             cursor: pointer;
         }
@@ -39,6 +57,12 @@
         input[type="text"] {
             padding: 5px;
             font-size: 14px;
+        }
+        
+        #header_tag{
+            font-weight: heavy;
+            color: black;
+            
         }
 
         /* Style for the output container */
@@ -53,7 +77,7 @@
 
         /* Style for the home button */
         #home-button {
-            background-color: #555;
+            background-color: #803423 ;
             color: #fff;
             border: none;
             padding: 10px 20px;
@@ -64,36 +88,150 @@
             background-color: #333;
         }
     </style>
+    
 </head>
 <body>
-    <h1>Forensic Tool</h1>
-    <form id="image-info-form" action="/execute" method="POST">
-        <input type="hidden" name="action" value="img_stat">
-        <button type="submit" id="image-info-button">Image Information</button>
-    </form>
-
-    <form id="partition-info-form" action="/execute" method="POST">
-        <input type="hidden" name="action" value="mmls">
-        <button type="submit" id="partition-info-button">Partition Information</button>
-    </form>
-
-    <form id="fls-form" action="/execute" method="POST">
-        <input type="hidden" name="action" value="fls">
-        <label for="offset">Offset:</label>
-        <input type="text" id="offset" name="offset" required>
-        <button type="submit" id="fls-button">Files and Directories</button>
-    </form>
+    <h1 id="header_tag">Forensic Tool</h1>
     
-    <form id="fsstat-form" action="/execute" method="POST">
-        <input type="hidden" name="action" value="fsstat">
-        <label for="offset">Offset:</label>
-        <input type="text" id="offset" name="offset" required> 
-        <button type="submit" id="fsstat-button">Files System Information</button>
-    </form>
+    <div id="margins">
+    
+	    <h3>Upload an Image</h3>    
+	    <form id="file-upload-form" action="/home" method="POST" enctype="multipart/form-data">
+	    	<input type="file" name="file" accept=".dd,.raw">
+	    	<br><br><button type="submit" id="file-upload-button">Upload File</button>
+	    </form>
+	    
+	    <div id="upload-banner" style="display: none;">
+	    	<br>File uploaded successfully
+	    </div>
+	    
+	    
+	    <h3>Forensic Image Information</h3>
+	    <p>Gives output contents of the provided image file(img_stat).</p>
+	    <form id="image-info-form" action="/execute" method="POST">
+		<input type="hidden" name="action" value="img_stat">
+		<button type="submit" id="image-info-button">Get info</button>
+	    </form>
 
+
+	    <h3>Disk Partition Information</h3>
+	    <p>Displays partition layout of the volume system(mmls).</p>
+	    <form id="partition-info-form" action="/execute" method="POST">
+		<input type="hidden" name="action" value="mmls">
+		<button type="submit" id="partition-info-button">Display</button>
+	    </form>
+
+
+	    <h3>Files and Directories</h3>
+	    <p>Give an offset value to list file and directory names of the provided disk image(fls).</p>
+	    <form id="fls-form" action="/execute" method="POST">
+		    <input type="hidden" name="action" value="fls">
+		    <label for="offset">Offset:</label>
+		    <input type="text" id="offset" name="offset" required>
+		    <br><br><button type="submit" id="fls-button">List</button>
+	    </form>
+
+
+	    <h3>File System Information</h3>	
+	    <p>Give an offset value to display the general information of a file system(fsstat).</p>    
+	    <form id="fsstat-form" action="/execute" method="POST">
+		    <input type="hidden" name="action" value="fsstat">
+		    <label for="offset">Offset:</label>
+		    <input type="text" id="offset" name="offset" required> 
+		    <br><br><button type="submit" id="fsstat-button">Get info</button>
+	    </form>
+
+
+	    <h3>Inode Information</h3>	   
+	    <p>Provide the offset value of an inode to display th inode information(ils).</p>
+	    <form id="ils-form" action="/execute" method="POST">
+		    <input type="hidden" name="action" value="ils">
+		    <label for="offset">Offset:</label>
+		    <input type="text" id="offset" name="offset" required>
+		    <br><br><button type="submit" id="ils-button">Display</button>
+	    </form>
+	    
+	    
+	    <h3>Jpegs</h3>
+	    <p>Create a folder to store all the jpegs extracted from the disk image(jpeg_extract).</p>
+	    <form id="jpeg_extract-form" action="/execute" method="POST">
+		    <input type="hidden" name="action" value="jpeg_extract">
+		    <label for="folder">Folder:</label>
+		    <input type="text" id="folder" name="folder" required>
+		    <br><br><button type="submit" id="jpeg_extract-button">Create Folder</button>
+	    </form>
+
+
+	    <h3>File Content</h3>
+	    <p>Enter an offset and an inode number to give the contents of a file based on its inode number(icat).</p>	    
+	    <form id="icat-form" action="/execute" method="POST">
+		    <input type="hidden" name="action" value="icat">
+		    <label for="offset">Offset:</label>
+		    <input type="text" id="offset" name="offset" required>
+		    <label for="inode">I-node:</label>
+		    <input type="text" id="inode" name="inode" required> 
+		    <br><br><button type="submit" id="icat-button">Get Contents</button>
+	    </form>
+
+
+	    <h3>Meta-data Structure</h3>
+	    <p>Enter an offset and an inode number to display details of a meta-data structure i.e..inode(istat).</p>	    
+	    <form id="istat-form" action="/execute" method="POST">
+		    <input type="hidden" name="action" value="istat">
+		    <label for="offset">Offset:</label>
+		    <input type="text" id="offset" name="offset" required>
+		    <label for="inode">I-node:</label>
+		    <input type="text" id="inode" name="inode" required> 
+		    <br><br><button type="submit" id="istat-button">Display structure</button>
+	    </form>
+
+
+	    <h3>File Categorization</h3>
+	    <p>Give an offset value to sort files in the disk image into categories based on file type(sorter).</p>
+	    <form id="sorter-form" action="/execute" method="POST">
+		    <input type="hidden" name="action" value="sorter">
+		    <label for="offset">Offset:</label>
+		    <input type="text" id="offset" name="offset" required>
+		    <br><br><button type="submit" id="sorter-button">Categorise</button>
+	    </form>
+
+
+	    <h3>String Search</h3>
+	    <p>Along with an offset enter a string to display all the instance where this string appears in the entire disk image.</p>	    
+	    <form id="stringsearch-form" action="/execute" method="POST">
+		    <input type="hidden" name="action" value="stringsearch">
+		    <label for="offset">Offset:</label>
+		    <input type="text" id="offset" name="offset" required>
+		    <label for="searchString">Search String:</label>
+		    <input type="text" id="searchString" name="searchString" required>
+		    <br><br><button type="submit" id="stringsearch-button">Search</button>
+	    </form>
+
+
+	    <h3>Recover Folders</h3>	
+	    <p>Create a folder where u want to store the recovered file.(recover).</p> 
+	    <form id="recover-form" action="/execute" method="POST">
+		    <input type="hidden" name="action" value="recover">
+		    <label for="offset">Offset:</label>
+		    <input type="text" id="offset" name="offset" required>
+		    <label for="dire">Enter File name:</label>
+		    <input type="text" id="dire" name="dire" required>
+		    <br><br><button type="submit" id="recover-button">Recover</button>
+	    </form>
+
+
+	    <h3>Printable Strings</h3>	 
+	    <p>Displays all the printable strings in files.(srch_strings).</p>   
+	    <form id="printablestrings-form" action="/execute" method="POST">
+		<input type="hidden" name="action" value="srch_strings">
+		<button type="submit" id="printablestrings-button">Print</button>
+	    </form>
+	    
+	</div>
+
+    <h3> Output terminal: </h3>
     <div id="output-container"></div>
-
-    <button type="button" id="home-button">Home</button>
+    <button type="button" id="home-button" >Back</button>
 
     <script>
         document.addEventListener('DOMContentLoaded', function () {
@@ -102,18 +240,66 @@
             const partitionInfoButton = document.getElementById('partition-info-button');
             const flsButton = document.getElementById('fls-button');
             const fsstatButton = document.getElementById('fsstat-button');
+            const ilsButton = document.getElementById('ils-button');
+            const jpeg_extractButton = document.getElementById('jpeg_extract-button');
+            const icatButton = document.getElementById('icat-button');
+            const istatButton = document.getElementById('istat-button');
+            const sorterButton = document.getElementById('sorter-button');
+            const stringsearchButton = document.getElementById('stringsearch-button');
+            const recoverButton = document.getElementById('recover-button');
+            const printablestringsButton = document.getElementById('printablestrings-button');
             const homeButton = document.getElementById('home-button');
             
             const outputContainer = document.getElementById('output-container');
+            const uploadBanner = document.getElementById('upload-banner');
             
             const imageInfoForm = document.getElementById('image-info-form');
             const partitionInfoForm = document.getElementById('partition-info-form');
             const flsForm = document.getElementById('fls-form');
             const fsstatForm = document.getElementById('fsstat-form');
-
+            const ilsForm = document.getElementById('ils-form');
+            const jpeg_extractForm = document.getElementById('jpeg_extract-form');
+            const icatForm = document.getElementById('icat-form');
+            const istatForm = document.getElementById('istat-form');
+            const sorterForm = document.getElementById('sorter-form');
+            const stringsearchForm = document.getElementById('stringsearch-form');
+            const recoverForm = document.getElementById('recover-form');
+            const printablestringsForm = document.getElementById('printablestrings-form');
+            
+            function displayUploadBanner() {
+                uploadBanner.style.display = 'block';
+                setTimeout(function() {
+                    uploadBanner.style.display = 'none';
+                }, 50000); // Hide the banner after 5 seconds (you can adjust the duration).
+            }
+            
             function displayOutput(output) {
                 outputContainer.innerHTML = output;
             }
+            
+            const fileUploadForm = document.getElementById('file-upload-form');
+		fileUploadForm.addEventListener('submit', async function (event) {
+		    event.preventDefault(); // Prevent the default form submission
+		    const formData = new FormData(fileUploadForm);
+
+		    try {
+			const response = await fetch('/home', {
+			    method: 'POST',
+			    body: formData,
+			});
+
+			if (response.ok) {
+			    // File was successfully uploaded
+			    displayUploadBanner();
+			} else {
+			    // Handle errors here
+			    outputContainer.innerText = 'Error: ' + response.statusText;
+			}
+		    } catch (error) {
+			outputContainer.innerText = 'Error: ' + error.message;
+		    }
+		});
+            
 
             imageInfoForm.addEventListener('submit', function (event) {
                 event.preventDefault(); // Prevent the default form submission
@@ -173,6 +359,141 @@
                 fetch('/execute', {
                     method: 'POST',
                     body: new FormData(fsstatForm),
+                })
+                .then(response => response.text()) // Use text() instead of json()
+                .then(data => {
+                    displayOutput(data);
+                })
+                .catch(error => {
+                    outputContainer.innerText = 'Error: ' + error.message;
+                });
+            });
+            
+            ilsForm.addEventListener('submit', function (event) {
+                event.preventDefault(); // Prevent the default form submission
+
+                // Make an AJAX request to execute the ils function
+                fetch('/execute', {
+                    method: 'POST',
+                    body: new FormData(ilsForm),
+                })
+                .then(response => response.text()) // Use text() instead of json()
+                .then(data => {
+                    displayOutput(data);
+                })
+                .catch(error => {
+                    outputContainer.innerText = 'Error: ' + error.message;
+                });
+            });
+            
+            jpeg_extractForm.addEventListener('submit', function (event) {
+                event.preventDefault(); // Prevent the default form submission
+
+                // Make an AJAX request to execute the jpeg_extract function
+                fetch('/execute', {
+                    method: 'POST',
+                    body: new FormData(jpeg_extractForm),
+                })
+                .then(response => response.text()) // Use text() instead of json()
+                .then(data => {
+                    displayOutput(data);
+                })
+                .catch(error => {
+                    outputContainer.innerText = 'Error: ' + error.message;
+                });
+            });
+            
+            icatForm.addEventListener('submit', function (event) {
+                event.preventDefault(); // Prevent the default form submission
+
+                // Make an AJAX request to execute the icat function
+                fetch('/execute', {
+                    method: 'POST',
+                    body: new FormData(icatForm),
+                })
+                .then(response => response.text()) // Use text() instead of json()
+                .then(data => {
+                    displayOutput(data);
+                })
+                .catch(error => {
+                    outputContainer.innerText = 'Error: ' + error.message;
+                });
+            });
+
+	    istatForm.addEventListener('submit', function (event) {
+                event.preventDefault(); // Prevent the default form submission
+
+                // Make an AJAX request to execute the istat function
+                fetch('/execute', {
+                    method: 'POST',
+                    body: new FormData(istatForm),
+                })
+                .then(response => response.text()) // Use text() instead of json()
+                .then(data => {
+                    displayOutput(data);
+                })
+                .catch(error => {
+                    outputContainer.innerText = 'Error: ' + error.message;
+                });
+            });
+            
+	    sorterForm.addEventListener('submit', function (event) {
+                event.preventDefault(); // Prevent the default form submission
+                
+                // Make an AJAX request to execute the sorter function
+                fetch('/execute', {
+                    method: 'POST',
+                    body: new FormData(sorterForm),
+                })
+                .then(response => response.text()) // Use text() instead of json()
+                .then(data => {
+                    displayOutput(data);
+                })
+                .catch(error => {
+                    outputContainer.innerText = 'Error: ' + error.message;
+                });
+            });
+            
+            stringsearchForm.addEventListener('submit', function (event) {
+            	event.preventDefault(); // Prevent the default form submission
+
+            	// Make an AJAX request to execute the stringsearch function
+            	fetch('/execute', {
+                	method: 'POST',
+                	body: new FormData(stringsearchForm),
+            	})
+            	.then(response => response.text())
+            	.then(data => {
+                	displayOutput(data);
+            	})
+            	.catch(error => {
+                	outputContainer.innerText = 'Error: ' + error.message;
+           	 });
+            });
+            
+            recoverForm.addEventListener('submit', function (event) {
+            	event.preventDefault(); // Prevent the default form submission
+
+            	// Make an AJAX request to execute the recover function
+            	fetch('/execute', {
+                	method: 'POST',
+                	body: new FormData(recoverForm),
+            	})
+            	.then(response => response.text())
+            	.then(data => {
+                	displayOutput(data);
+            	})
+            	.catch(error => {
+                	outputContainer.innerText = 'Error: ' + error.message;
+           	 });
+            });
+            printablestringsForm.addEventListener('submit', function (event) {
+                event.preventDefault(); // Prevent the default form submission
+
+                // Make an AJAX request to execute the srch_strings function
+                fetch('/execute', {
+                    method: 'POST',
+                    body: new FormData(printablestringsForm),
                 })
                 .then(response => response.text()) // Use text() instead of json()
                 .then(data => {
