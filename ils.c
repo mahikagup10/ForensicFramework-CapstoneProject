@@ -19,8 +19,8 @@ int ils(int offset) {
 		printf("%c", c);
 		}    
 		pclose(fpipe);
-    	//}
-    	//fclose(file);
+    	}
+    	fclose(file);
     	return EXIT_SUCCESS;
 }
 
