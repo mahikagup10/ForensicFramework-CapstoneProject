@@ -6,7 +6,7 @@ app = Flask(__name__)
 
 @app.route('/')
 def index():
-    return render_template('index.html')
+	return render_template('index.html')
     
 @app.route('/home',methods=['POST'])	
 def upload_file():
@@ -23,10 +23,11 @@ def upload_file():
 		return 'No file selected'
 
 @app.route('/execute', methods=['POST'])
+
 def execute():
     action = request.form['action']
     output = ""
-
+	
     if action == 'img_stat':
         # Compile and execute img_stat tool
         command = ['gcc', 'img_stat.c', '-o', 'img_stat']
@@ -93,6 +94,96 @@ def execute():
             # Handle errors here, for example:
             return jsonify(error="An error occurred during fsstat execution.")
             
+    if action == 'ils':
+        # Get the offset from the form data
+        offset = request.form['offset']
+        try:
+            # Compile and execute fls tool
+            command = ['gcc', 'ils.c', '-o', 'ils']
+            subprocess.run(command)
+            # Replace '/path/to/your/image.dd' with the actual path to your forensic image file
+            output = subprocess.check_output(['./ils', offset], stderr=subprocess.STDOUT, text=True)
+            # Wrap the output in <pre> tags and replace newlines with <br> tags
+            output = '<pre>' + output.replace('\n', '<br>') + '</pre>'
+        except subprocess.CalledProcessError as e:
+            # Handle errors here, for example:
+            #return e
+            print(type(output))
+            print(e)
+            return jsonify(error="An error occurred during ils execution.")
+            
+    if action == 'jpeg_extract':
+        # Get the offset from the form data
+        folder = request.form['folder']
+        try:
+            # Compile and execute fls tool
+            command = ['gcc', 'jpeg_extract.c', '-o', 'jpeg_extract']
+            subprocess.run(command)
+            # Replace '/path/to/your/image.dd' with the actual path to your forensic image file
+            output = subprocess.check_output(['./jpeg_extract', folder], stderr=subprocess.STDOUT, text=True)
+            # Wrap the output in <pre> tags and replace newlines with <br> tags
+            output = '<pre>' + output.replace('\n', '<br>') + '</pre>'
+        except subprocess.CalledProcessError as e:
+            # Handle errors here, for example:
+            #return e
+            print(type(output))
+            print(e)
+            return jsonify(error="An error occurred during ils execution.")
+            
+    if action == 'icat':
+        # Get the offset from the form data
+        offset = request.form['offset']
+        inode = request.form['inode']
+  
+        try:
+            # Compile and execute fls tool
+            command = ['gcc', 'icat.c', '-o', 'icat']
+            subprocess.run(command)
+            # Replace '/path/to/your/image.dd' with the actual path to your forensic image file
+            output = subprocess.check_output(['./icat', offset, inode], stderr=subprocess.STDOUT, text=True)
+            
+            # Wrap the output in <pre> tags and replace newlines with <br> tags
+            output = '<pre>' + output.replace('\n', '<br>') + '</pre>'
+        except subprocess.CalledProcessError as e:
+            # Handle errors here, for example:
+            return jsonify(error="An error occurred during icat execution.")
+            
+    if action == 'istat':
+        # Get the offset from the form data
+        offset = request.form['offset']
+        inode = request.form['inode']
+  
+        try:
+            # Compile and execute fls tool
+            command = ['gcc', 'istat.c', '-o', 'istat']
+            subprocess.run(command)
+            # Replace '/path/to/your/image.dd' with the actual path to your forensic image file
+            output = subprocess.check_output(['./istat', offset, inode], stderr=subprocess.STDOUT, text=True)
+            
+            # Wrap the output in <pre> tags and replace newlines with <br> tags
+            output = '<pre>' + output.replace('\n', '<br>') + '</pre>'
+        except subprocess.CalledProcessError as e:
+            # Handle errors here, for example:
+            return jsonify(error="An error occurred during istat execution.")
+
+    if action == 'sorter':
+        # Get the offset from the form data
+        offset = request.form['offset']
+        try:
+            # Compile and execute fls tool
+            command = ['gcc', 'sorter.c', '-o', 'sorter']
+            subprocess.run(command)
+            # Replace '/path/to/your/image.dd' with the actual path to your forensic image file
+            output = subprocess.check_output(['./sorter', offset], stderr=subprocess.STDOUT, text=True)
+            # Wrap the output in <pre> tags and replace newlines with <br> tags
+            output = '<pre>' + output.replace('\n', '<br>') + '</pre>'
+        except subprocess.CalledProcessError as e:
+            # Handle errors here, for example:
+            #return e
+            print(type(output))
+            print(e)
+            return jsonify(error="An error occurred during fls execution.")
+    
     if action == 'stringsearch':
         searchString = request.form['searchString']
         offset = request.form['offset']
@@ -110,7 +201,40 @@ def execute():
         except subprocess.CalledProcessError as e:
             # Handle errors here, for example:
             return jsonify(error="An error occurred during stringsearch execution.")
+            
+    if action == 'recover':
+        dire = request.form['dire']
+        offset = request.form['offset']
+        print(offset)
 
+        try:
+            # Compile and execute recover tool
+            command = ['gcc', 'tsk_recover.c', '-o', 'recover']
+            subprocess.run(command)
+
+            # Execute the tsk_recover program with offset and file name as arguments
+            output = subprocess.check_output(['./recover', offset, dire], stderr=subprocess.STDOUT, text=True)
+
+            # Wrap the output in <pre> tags and replace newlines with <br> tags
+            output = '<pre>' + output.replace('\n', '<br>') + '</pre>'
+        except subprocess.CalledProcessError as e:
+            # Handle errors here, for example:
+            return jsonify(error="An error occurred during recover execution.")
+            
+    if action == 'srch_strings':
+        # Compile and execute srch_strings tool
+        command = ['gcc', 'strings.c', '-o', 'string']
+        # Compile the C program if not already compiled
+        subprocess.run(command)
+
+        # Replace '/path/to/your/image.dd' with the actual path to your forensic image file
+        try:
+            output = subprocess.check_output(['./string'], stderr=subprocess.STDOUT, text=True)
+            # Wrap the output in <pre> tags and replace newlines with <br> tags
+            output = '<pre>' + output.replace('\n', '<br>') + '</pre>'
+        except subprocess.CalledProcessError as e:
+            # Handle errors here, for example:
+            return jsonify(error="An error occurred during srch_strings execution.")
 
     print(type(output))
     return output
