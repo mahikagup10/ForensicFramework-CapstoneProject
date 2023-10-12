@@ -1,5 +1,9 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
+#include <errno.h>
+#include <sys/stat.h>
+
 FILE* file;
 char path[100];
 
@@ -7,6 +11,15 @@ int sorter(int offset) {
     FILE* fpipe;
     char c = 0;
     char command[256];
+    
+    // Create the 'sorted_files' directory if it doesn't exist
+    const char* directory_name = "sorted_files";
+    if (mkdir(directory_name, 0777) == -1) {
+        if (errno != EEXIST) {
+            perror("Error creating 'sorted_files' directory");
+            exit(EXIT_FAILURE);
+        }
+    }
     
     file = fopen("file_address.txt","r");
     if(fgets(path,sizeof(path),file) != NULL){
