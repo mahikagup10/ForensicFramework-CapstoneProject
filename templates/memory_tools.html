@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Memory Forensics Tools</title>
+    <!-- Include any necessary CSS files here -->
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='styles.css') }}">
+</head>
+<body>
+    <h1>Memory Forensics Tools</h1>
+
+    <div class="main-container">
+
+        <!-- Include a back button to return to the memory forensics page if needed -->
+        <button id="back-button">Back</button>
+
+        <div class="button-container">
+
+            <!-- Example: Memory Forensics Tool 1 -->
+            <div class="form-field">
+                <p>Memory Forensics Tool 1</p>  
+                <form id="tool1-form" action="/execute" method="POST">
+                    <input type="hidden" name="action" value="tool1">
+                    <!-- Add any tool-specific input fields here -->
+                    <button type="submit" id="tool1-button">Execute Tool 1</button>
+                </form>
+            </div>
+
+            <!-- Example: Memory Forensics Tool 2 -->
+            <div class="form-field">
+                <p>Memory Forensics Tool 2</p> 
+                <form id="tool2-form" action="/execute" method="POST">
+                    <input type="hidden" name="action" value="tool2">
+                    <!-- Add any tool-specific input fields here -->
+                    <button type="submit" id="tool2-button">Execute Tool 2</button>
+                </form>
+            </div>
+
+            <!-- Add more memory forensics tools as needed -->
+            
+        </div>
+
+        <div id="output-container" class="output-container"></div>
+    </div>
+
+    <!-- Include any necessary JavaScript for handling form submissions and interactions -->
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const backButton = document.getElementById('back-button');
+            const outputContainer = document.getElementById('output-container');
+
+            // Add event listeners to your form fields for executing memory forensics tools
+            // Use JavaScript fetch requests similar to the ones in your storage forensics page to execute tools
+
+            // Example: Execute Tool 1
+            const tool1Form = document.getElementById('tool1-form');
+            tool1Form.addEventListener('submit', function (event) {
+                event.preventDefault();
+                // Make an AJAX request to execute Tool 1
+                // Replace this with the actual fetch request for Tool 1
+                fetch('/execute', {
+                    method: 'POST',
+                    body: new FormData(tool1Form),
+                })
+                .then(response => response.text())
+                .then(data => {
+                    displayOutput(data);
+                })
+                .catch(error => {
+                    outputContainer.innerText = 'Error: ' + error.message;
+                });
+            });
+
+            // Example: Execute Tool 2
+            const tool2Form = document.getElementById('tool2-form');
+            tool2Form.addEventListener('submit', function (event) {
+                event.preventDefault();
+                // Make an AJAX request to execute Tool 2
+                // Replace this with the actual fetch request for Tool 2
+                fetch('/execute', {
+                    method: 'POST',
+                    body: new FormData(tool2Form),
+                })
+                .then(response => response.text())
+                .then(data => {
+                    displayOutput(data);
+                })
+                .catch(error => {
+                    outputContainer.innerText = 'Error: ' + error.message;
+                });
+            });
+
+            // Implement similar event listeners for other memory forensics tools as needed
+
+            backButton.addEventListener('click', function () {
+                // Navigate back to the memory forensics page ("/memory_forensics")
+                window.location.href = '/memory_forensics';
+            });
+        });
+
+        function displayOutput(output) {
+            outputContainer.innerHTML = output;
+        }
+    </script>
+</body>
+</html>
