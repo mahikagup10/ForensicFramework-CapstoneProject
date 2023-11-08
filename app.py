@@ -1,20 +1,52 @@
-from flask import Flask, render_template, request, jsonify
+from flask import Flask, render_template, request, jsonify, redirect, url_for
 import subprocess
 import os
 
 app = Flask(__name__)
 
 @app.route('/')
-def index():
-	return render_template('index.html')
+def choose_forensics():
+    return render_template('choose_forensics.html')
+
+@app.route('/storage_forensics', methods=['GET', 'POST'])
+def storage_forensics():
+    if request.method == 'POST':
+        return redirect(url_for('storage_forensics'))
+    return render_template('index.html')
+
+@app.route('/memory_forensics', methods=['GET', 'POST'])
+def memory_forensics():
+    if request.method == 'POST':
+        return redirect(url_for('memory_tools'))
+    return render_template('memory_tools.html')
+
+@app.route('/memory_tools', methods=['GET', 'POST'])
+def memory_tools():
+    # This route will handle memory forensics tool actions
+    if request.method == 'POST':
+        # Add code here to process the memory forensics tool actions
+        # You can use request.form to access form data
+        # For example:
+        action = request.form.get('action')
+        if action == 'tool1':
+            # Code to execute tool 1
+            pass
+        elif action == 'tool2':
+            # Code to execute tool 2
+            pass
+        # You can add more conditions for other tools as needed
+    return render_template('memory_tools.html')  # Render the memory tools page
+
     
 @app.route('/home',methods=['POST'])	
 def upload_file():
+	global fileaddress
 	uploaded_file = request.files['file']
 	if uploaded_file.filename != '':
 		upload_dir = 'Image'
 		os.makedirs(upload_dir, exist_ok=True)
 		file_address = os.path.join(upload_dir,uploaded_file.filename)
+		fileaddress=file_address
 		uploaded_file.save(file_address)
 		with open('file_address.txt','w') as file:
 			file.write(file_address)
