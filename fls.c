@@ -1,27 +1,27 @@
 #include <stdio.h>
 #include <stdlib.h>
-
-char path[] = "/home/mahika/Downloads/CapstoneFramework/Mantooth_raw.dd.raw";
+FILE* file;
+char path[100];
 
 int fls(int offset) {
-    FILE* fpipe;
-    char c = 0;
-    char command[256];
-    
-    snprintf(command, sizeof(command), "fls -o %d -r %s", offset, path);
-    fpipe = (FILE*)popen(command, "r");
-    
-    if(fpipe == NULL){
-        perror("Error opening pipe");
-        exit(EXIT_FAILURE);
-    }
-
-    while(fread(&c, sizeof c, 1, fpipe)){
-        printf("%c", c);
-    }
-    
-    pclose(fpipe);
-    return EXIT_SUCCESS;
+	FILE* fpipe;
+	char c = 0;
+	char command[256];
+	file = fopen("file_address.txt","r");
+	if(fgets(path,sizeof(path),file) != NULL){
+		snprintf(command, sizeof(command), "fls -o %d -r %s", offset, path);
+		fpipe = (FILE*)popen(command, "r");	    
+		if(fpipe == NULL){
+		perror("Error opening pipe");
+		exit(EXIT_FAILURE);
+		}
+		while(fread(&c, sizeof c, 1, fpipe)){
+		printf("%c", c);
+		}    
+		pclose(fpipe);
+    	}
+    	fclose(file);
+    	return EXIT_SUCCESS;
 }
 
 int main(int argc, char* argv[]) {
