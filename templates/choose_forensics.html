@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Choose Forensics</title>
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='styles.css') }}">
+    <style>
+        /* Style for the main container */
+        .main-container {
+            display: flex;
+            justify-content: center; /* Center the content horizontally */
+            align-items: center; /* Center the content vertically */
+            height: 100vh; /* Make the container cover the full viewport height */
+        }
+
+        /* Style for the buttons container */
+        .button-container {
+            text-align: center; /* Center the buttons horizontally within their container */
+            margin: 10px;
+        }
+
+        /* Style for the button container */
+        .button-container form {
+            display: flex;
+            justify-content: space-around;
+            width: 400px; /* Set a fixed width for the container */
+        }
+
+        /* Style for the buttons */
+        button {
+            font-size: 24px; /* Increase the font size to make buttons larger */
+            width: 580px; /* Set a fixed width for the buttons */
+            padding: 50px; /* Add padding to make buttons larger */
+        }
+    </style>
+</head>
+<body>
+    <h1>Choose Forensics Type</h1>
+    
+    <div class="main-container">
+        <div class="button-container">
+            <form method="POST" action="/storage_forensics">
+                <button type="submit">Storage Forensics</button>
+            </form>
+
+            <form method="POST" action="/memory_forensics">
+                <button type="submit">Memory Forensics</button>
+            </form>
+        </div>
+    </div>
+</body>
+</html>
