@@ -115,6 +115,16 @@
         </div>
     
     
+    	<div class="form-field">
+        <p>Display command line arguments (cmdline)</p>  
+        <form id="cmdline-form" action="/execute" method="POST">
+            <input type="hidden" name="action" value="cmdline">
+            <!--<label for="offset">Profile:</label>
+            <input type="text" id="profile" name="profile" required>-->
+            <button type="submit" id="cmdline-button">Display Command Line Arguments</button>
+        </form>
+        </div>
+    
                 <div class="form-field">
         <p>Extract password hashes (hashdump)</p>  
         <form id="hashdump-form" action="/memory_tools" method="POST">
@@ -164,7 +174,8 @@
 	    const netscanButton = document.getElementById('netscan-button');
 	    const pslistButton = document.getElementById('pslist-button');	
 	    const psxviewButton = document.getElementById('psxview-button');
-	    const hashdumpButton = document.getElementById('hashdump-button');		
+	    const hashdumpButton = document.getElementById('hashdump-button');	
+	    const cmdlineButton = document.getElementById('cmdline-button');		
 	    
 	    const memimageInfoForm = document.getElementById('mem-image-info-form');
             const printKeysForm = document.getElementById('print-keys-form');
@@ -174,6 +185,7 @@
             const psxviewForm = document.getElementById('psxview-form');
             const hashdumpForm = document.getElementById('hashdump-form');
             const crackPasswordForm = document.getElementById('crack-password-form');
+            const cmdlineForm = document.getElementById('cmdline-form');
     
             
             function displayUploadBanner() {
@@ -340,6 +352,23 @@
                 fetch('/memory_tools', {
                     method: 'POST',
                     body: new FormData(psxviewForm),
+                })
+                .then(response => response.text()) // Use text() instead of json()
+                .then(data => {
+                    displayOutput(data);
+                })
+                .catch(error => {
+                    outputContainer.innerText = 'Error: ' + error.message;
+                });
+            });
+            
+            cmdlineForm.addEventListener('submit', function (event) {
+                event.preventDefault(); // Prevent the default form submission
+
+                // Make an AJAX request to execute the img_stat function
+                fetch('/memory_tools', {
+                    method: 'POST',
+                    body: new FormData(cmdlineForm),
                 })
                 .then(response => response.text()) // Use text() instead of json()
                 .then(data => {

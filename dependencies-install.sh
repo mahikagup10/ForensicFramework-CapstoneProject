@@ -9,6 +9,7 @@ pip2 install distorm3
 git clone https://github.com/volatilityfoundation/volatility.git
 sudo mkdir /opt/volatility
 sudo mv ~/Downloads/volatility /opt/volatility
+sudo apt install hashcat
 
 
 
