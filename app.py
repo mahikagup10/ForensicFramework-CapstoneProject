@@ -151,8 +151,6 @@ def memory_tools():
                 return jsonify(error="An error occurred during psxview execution.")
         
         if action == 'hashdump':
-            system = request.form['system']
-            sam = request.form['sam']
             command = ['python2', '/opt/volatility/vol.py', '-f', mem_address, '--profile='+profile, 'hashdump']
             try:
                 output = subprocess.check_output(command, stderr=subprocess.STDOUT, text=True)
@@ -163,6 +161,27 @@ def memory_tools():
                 # Handle errors here, for example:
                 print(e.cmd, e.output)
                 return jsonify(error="An error occurred during psxview execution.")
+               
+        if action == 'crackpassword':
+            hash_value = request.form['hash_value']  # Get the hash value from the form
+    
+    # Store the hash value in a file called hash.txt
+            with open('hash.txt', 'w') as hash_file:
+                hash_file.write(hash_value)
+    
+    # Run the hashcat command
+            command = ['hashcat', '-m', '1000', '-a', '0', 'hash.txt', 'rockyou.txt']
+    
+            try:
+                output = subprocess.check_output(command, stderr=subprocess.STDOUT, text=True)
+        # Wrap the output in <pre> tags and replace newlines with <br> tags
+                output = '<pre>' + output.replace('\n', '<br>') + '</pre>'
+                return output
+            except subprocess.CalledProcessError as e:
+        # Handle errors here, for example:
+                print(e.cmd, e.output)
+        return jsonify(error="An error occurred during hashcat execution.")
+
                 
                
     
