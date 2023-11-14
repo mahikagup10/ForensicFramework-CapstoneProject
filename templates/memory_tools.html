@@ -115,7 +115,19 @@
         </div>
     
     
-            
+                <div class="form-field">
+        <p>Extract password hashes (hashdump)</p>  
+        <form id="hashdump-form" action="/memory_tools" method="POST">
+            <input type="hidden" name="action" value="hashdump">
+            <!-- <label for="offset">Profile:</label>
+            <input type="text" id="profile" name="profile" required> -->
+            <label for="offset">System Hive Virtual Address:</label>
+            <input type="text" id="system" name="system" required>
+            <label for="offset">SAM Hive Virtual Address:</label>
+            <input type="text" id="sam" name="sam" required>
+            <button type="submit" id="hashdump-button">View Password Hashes</button>
+        </form>
+        </div>       
 
    	</div>
         
@@ -141,7 +153,8 @@
 	    const successBanner = document.getElementById('success-banner');
 	    const netscanButton = document.getElementById('netscan-button');
 	    const pslistButton = document.getElementById('pslist-button');	
-	    const psxviewButton = document.getElementById('psxview-button');	
+	    const psxviewButton = document.getElementById('psxview-button');
+	    const hashdumpButton = document.getElementById('hashdump-button');		
 	    
 	    const memimageInfoForm = document.getElementById('mem-image-info-form');
             const printKeysForm = document.getElementById('print-keys-form');
@@ -149,6 +162,7 @@
             const netscanForm = document.getElementById('netscan-form');
             const pslistForm = document.getElementById('pslist-form');
             const psxviewForm = document.getElementById('psxview-form');
+            const hashdumpForm = document.getElementById('hashdump-form');
     
             
             function displayUploadBanner() {
@@ -278,7 +292,7 @@
                 event.preventDefault(); // Prevent the default form submission
 
                 // Make an AJAX request to execute the img_stat function
-                fetch('/execute', {
+                fetch('/memory_tools', {
                     method: 'POST',
                     body: new FormData(netscanForm),
                 })
@@ -295,7 +309,7 @@
                 event.preventDefault(); // Prevent the default form submission
 
                 // Make an AJAX request to execute the img_stat function
-                fetch('/execute', {
+                fetch('/memory_tools', {
                     method: 'POST',
                     body: new FormData(pslistForm),
                 })
@@ -312,9 +326,26 @@
                 event.preventDefault(); // Prevent the default form submission
 
                 // Make an AJAX request to execute the img_stat function
-                fetch('/execute', {
+                fetch('/memory_tools', {
                     method: 'POST',
                     body: new FormData(psxviewForm),
+                })
+                .then(response => response.text()) // Use text() instead of json()
+                .then(data => {
+                    displayOutput(data);
+                })
+                .catch(error => {
+                    outputContainer.innerText = 'Error: ' + error.message;
+                });
+            });
+            
+            hashdump.addEventListener('submit', function (event) {
+                event.preventDefault(); // Prevent the default form submission
+
+                // Make an AJAX request to execute the img_stat function
+                fetch('/memory_tools', {
+                    method: 'POST',
+                    body: new FormData(hashdumpForm),
                 })
                 .then(response => response.text()) // Use text() instead of json()
                 .then(data => {

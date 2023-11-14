@@ -89,7 +89,7 @@ def memory_tools():
 
         if action == 'memimageinfo':
             # Logic to handle 'memimageinfo' action
-            command = ["python2", "/usr/bin/vol.py", "-f", mem_address, "imageinfo"]
+            command = ["python2", "/opt/volatility/vol.py", "-f", mem_address, "imageinfo"]
             try:
                 output = subprocess.check_output(command, stderr=subprocess.STDOUT, text=True)
                 # Wrap the output in <pre> tags and replace newlines with <br> tags
@@ -103,7 +103,7 @@ def memory_tools():
             # Logic to handle 'printkey' action (displaying registry keys)
             # profile = request.form.get('profile')
             # Add logic to display registry keys using the provided profile
-            command = ['python2', '/usr/bin/vol.py', '-f', mem_address, '--profile='+profile,'printkey']
+            command = ['python2', '/opt/volatility/vol.py', '-f', mem_address, '--profile='+profile,'printkey']
             try:
                 output = subprocess.check_output(command, stderr=subprocess.STDOUT, text=True)
                 # Wrap the output in <pre> tags and replace newlines with <br> tags
@@ -115,17 +115,60 @@ def memory_tools():
                 return jsonify(error="An error occurred during printkey execution.")
 
         if action == 'netscan':
-            command = ['python2', '/usr/bin/vol.py', '-f', mem_address, '--profile='+profile,'netscan']
+            command = ['python2', '/opt/volatility/vol.py', '-f', mem_address, '--profile='+profile,'netscan']
             try:
                 output = subprocess.check_output(command, stderr=subprocess.STDOUT, text=True)
                 # Wrap the output in <pre> tags and replace newlines with <br> tags
                 output = '<pre>' + output.replace('\n', '<br>') + '</pre>'
+                return output
             except subprocess.CalledProcessError as e:
                 # Handle errors here, for example:
                 print(e.cmd, e.output)
                 return jsonify(error="An error occurred during netscan execution.")
+                
+        if action == 'pslist':
+            command = ['python2', '/opt/volatility/vol.py', '-f', mem_address, '--profile='+profile,'pslist']
+            try:
+                output = subprocess.check_output(command, stderr=subprocess.STDOUT, text=True)
+                # Wrap the output in <pre> tags and replace newlines with <br> tags
+                output = '<pre>' + output.replace('\n', '<br>') + '</pre>'
+                return output
+            except subprocess.CalledProcessError as e:
+                # Handle errors here, for example:
+                print(e.cmd, e.output)
+                return jsonify(error="An error occurred during pslist execution.")
+                
+        if action == 'psxview':
+            command = ['python2', '/opt/volatility/vol.py', '-f', mem_address, '--profile='+profile,'psxview']
+            try:
+                output = subprocess.check_output(command, stderr=subprocess.STDOUT, text=True)
+                # Wrap the output in <pre> tags and replace newlines with <br> tags
+                output = '<pre>' + output.replace('\n', '<br>') + '</pre>'
+                return output
+            except subprocess.CalledProcessError as e:
+                # Handle errors here, for example:
+                print(e.cmd, e.output)
+                return jsonify(error="An error occurred during psxview execution.")
+        
+        if action == 'hashdump':
+            system = request.form['system']
+            sam = request.form['sam']
+            command = ['python2', '/opt/volatility/vol.py', '-f', mem_address, '--profile='+profile, 'hashdump']
+            try:
+                output = subprocess.check_output(command, stderr=subprocess.STDOUT, text=True)
+                # Wrap the output in <pre> tags and replace newlines with <br> tags
+                output = '<pre>' + output.replace('\n', '<br>') + '</pre>'
+                return output
+            except subprocess.CalledProcessError as e:
+                # Handle errors here, for example:
+                print(e.cmd, e.output)
+                return jsonify(error="An error occurred during psxview execution.")
+                
+               
+    
     # Return the appropriate response or render the necessary template
     return render_template('memory_tools.html', output=output)  # Rendering the memory tools page
+    
     
     
 @app.route('/memory_upload',methods=['POST'])	
