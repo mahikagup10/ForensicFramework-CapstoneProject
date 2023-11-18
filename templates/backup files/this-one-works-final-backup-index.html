@@ -3,45 +3,15 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Storage Forensics</title>
+    <title>Forensic Tool</title>
     <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='styles.css') }}">
-    <style>
-        /* Style for the main container */
-        .main-container {
-            display: flex;
-            justify-content: space-between;
-        }
-
-        /* Style for the left container (buttons and forms) */
-        .button-container {
-            width: 48%; /* Adjust the width as needed */
-            padding: 10px;
-        }
-
-        /* Style for the right container (output) */
-        #output-container {
-            width: 48%; /* Adjust the width as needed */
-            border: 2px solid #0aff00;
-            padding: 10px;
-        }
-
-        /* Style for the individual buttons */
-        .form-field {
-            display: block;
-            margin-bottom: 10px;
-        }
-    </style>
 </head>
 <body>
-    <h1>Storage Forensics</h1>
-    
-    <div class="main-container">
-    
-    <div class="button-container">
+    <h1>Forensic Tool</h1>
     
     <h4>Upload an Image</h4>    
     
-    <form id="file-upload-form" action="/storage_upload" method="POST" enctype="multipart/form-data">
+    <form id="file-upload-form" action="/home" method="POST" enctype="multipart/form-data">
     	<input type="file" name="file" accept=".dd,.raw">
     	<button type="submit" id="file-upload-button">Upload File</button>
     </form>
@@ -49,25 +19,18 @@
     <div id="upload-banner" style="display: none;">
     	File uploaded successfully
     </div>
-         
-        <div class="form-field">
-        <p>Get information on the provided forensic image (img_stat)</p>  
+           
         <form id="image-info-form" action="/execute" method="POST">
             <input type="hidden" name="action" value="img_stat">
             <button type="submit" id="image-info-button">Forensic Image Information</button>
         </form>
-        </div>
 
-        <div class="form-field">
-        <p>Get information on the disk partition of the provided forensic image (mmls)</p> 
         <form id="partition-info-form" action="/execute" method="POST">
             <input type="hidden" name="action" value="mmls">
             <button type="submit" id="partition-info-button">Disk Partition Information</button>
         </form>
-        </div>
 
         <div class="form-field">
-        <p>List the files and directories present in the specified partition of disk image (fls)</p> 
             <form id="fls-form" action="/execute" method="POST">
                 <input type="hidden" name="action" value="fls">
                 <label for="offset">Offset:</label>
@@ -77,7 +40,6 @@
         </div>
 
         <div class="form-field">
-        <p>Get information on the file system in the specified partition of disk image (fsstat)</p> 
             <form id="fsstat-form" action="/execute" method="POST">
                 <input type="hidden" name="action" value="fsstat">
                 <label for="offset">Offset:</label>
@@ -87,7 +49,6 @@
         </div>
 
         <div class="form-field">
-        <p>List inode information in the specified partition of disk image (ils)</p> 
             <form id="ils-form" action="/execute" method="POST">
                 <input type="hidden" name="action" value="ils">
                 <label for="offset">Offset:</label>
@@ -97,18 +58,15 @@
         </div>
 
         <div class="form-field">
-        <p>Extract all jpg/jpeg images from the disk image (jpeg_extract)</p> 
-        <p>Specify path to folder to store the image files</p> 
             <form id="jpeg_extract-form" action="/execute" method="POST">
                 <input type="hidden" name="action" value="jpeg_extract">
                 <label for="folder">Folder:</label>
                 <input type="text" id="folder" name="folder" required>
-                <button type="submit" id="jpeg_extract-button">Extract jpg/jpegs</button>
+                <button type="submit" id="jpeg_extract-button">Enter Path to create folder for jpeg images to be stored:</button>
             </form>
         </div>
 
         <div class="form-field">
-        <p>Output the contents of a file based on its inode number (icat)</p> 
             <form id="icat-form" action="/execute" method="POST">
                 <input type="hidden" name="action" value="icat">
                 <label for="offset">Offset:</label>
@@ -120,11 +78,10 @@
         </div>
 
         <div class="form-field">
-        <p>Display details of a meta-data structure (i.e inode) (icat)</p> 
             <form id="istat-form" action="/execute" method="POST">
                 <input type="hidden" name="action" value="istat">
                 <label for="offset">Offset:</label>
-                <input type="text" id="offset" name="offset" required>
+                <input type="text" id="offset" name "offset" required>
                 <label for="inode">I-node:</label>
                 <input type="text" id="inode" name="inode" required>
                 <button type="submit" id="istat-button">I-Node Details</button>
@@ -132,7 +89,6 @@
         </div>
 
         <div class="form-field">
-        <p>Sort files in a disk image into categories based on file type (sorter)</p> 
             <form id="sorter-form" action="/execute" method="POST">
                 <input type="hidden" name="action" value="sorter">
                 <label for="offset">Offset:</label>
@@ -142,7 +98,6 @@
         </div>
 
         <div class="form-field">
-        <p>Search for a particular string in a partition</p> 
             <form id="stringsearch-form" action="/execute" method="POST">
                 <input type="hidden" name="action" value="stringsearch">
                 <label for="offset">Offset:</label>
@@ -154,30 +109,27 @@
         </div>
 
         <div class="form-field">
-        <p>Export files from a forensic image into a local directory (tsk_recover)</p> 
             <form id="recover-form" action="/execute" method="POST">
                 <input type="hidden" name="action" value="recover">
                 <label for="offset">Offset:</label>
                 <input type="text" id="offset" name="offset" required>
-                <label for="dire">Enter Folder name:</label>
+                <label for="dire">Enter File name:</label>
                 <input type="text" id="dire" name="dire" required>
                 <button type="submit" id="recover-button">Recover folders</button>
             </form>
         </div>
 
         <div class="form-field">
-        <p>Display all printable strings in the files present in the forensic image (srch_strings)</p> 
             <form id="printablestrings-form" action="/execute" method="POST">
                 <input type="hidden" name="action" value="srch_strings">
                 <button type="submit" id="printablestrings-button">View Printable Strings</button>
             </form>
         </div>
+
+        <div id="output-container"></div>
     </div>
 
-    <div id="output-container" class="output-container"></div>
-   
-</div>   
-   
+    <button type="button" id="home-button">Home</button>
 
     <script>
         document.addEventListener('DOMContentLoaded', function () {
@@ -229,7 +181,7 @@
 		    const formData = new FormData(fileUploadForm);
 
 		    try {
-			const response = await fetch('/storage_upload', {
+			const response = await fetch('/home', {
 			    method: 'POST',
 			    body: formData,
 			});

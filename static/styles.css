@@ -36,6 +36,7 @@ h2 {
 }
 
 
+
 form {
     margin: 20px 0;
     color: #0aff00;
@@ -68,10 +69,11 @@ button {
     font-family: 'Courier New', Courier, monospace;
 }
 
+#success-banner,
 #upload-banner {
     display: none;
     background-color: #4CAF50;
-    color: #fff;
+    color: #ffff;
     padding: 10px;
     font-family: 'Courier New', Courier, monospace;
 }

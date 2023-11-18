@@ -20,7 +20,7 @@ int recover(int offset, const char* dire) {
 	    // Print the directory to verify it
 	    printf("Output file: %s\n", dire);
 
-	    snprintf(command, sizeof(command), "tsk_recover -e -o %d %s %s", offset, path, dire);
+	    snprintf(command, sizeof(command), "tsk_recover -e -o %d %s '%s'", offset, path, dire);
 	    
 	    fpipe = (FILE*)popen(command, "r");
 	    

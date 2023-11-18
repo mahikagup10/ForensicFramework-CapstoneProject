@@ -3,105 +3,419 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Memory Forensics Tools</title>
-    <!-- Include any necessary CSS files here -->
+    <title>Memory Forensic Tool</title>
     <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='styles.css') }}">
+    <style>
+        /* Style for the main container */
+        .main-container {
+            display: flex;
+            justify-content: space-between;
+        }
+
+        /* Style for the left container (buttons and forms) */
+        .button-container {
+            width: 48%; /* Adjust the width as needed */
+            padding: 10px;
+        }
+
+        /* Style for the right container (output) */
+        #output-container {
+            width: 48%; /* Adjust the width as needed */
+            border: 2px solid #0aff00;
+            padding: 10px;
+        }
+
+        /* Style for the individual buttons */
+        .form-field {
+            display: block;
+            margin-bottom: 10px;
+        }
+    </style>
 </head>
 <body>
-    <h1>Memory Forensics Tools</h1>
+    <h1>Memory Forensic Tool</h1>
 
     <div class="main-container">
-
-        <!-- Include a back button to return to the memory forensics page if needed -->
-        <button id="back-button">Back</button>
-
         <div class="button-container">
-
-            <!-- Example: Memory Forensics Tool 1 -->
-            <div class="form-field">
-                <p>Memory Forensics Tool 1</p>  
-                <form id="tool1-form" action="/execute" method="POST">
-                    <input type="hidden" name="action" value="tool1">
-                    <!-- Add any tool-specific input fields here -->
-                    <button type="submit" id="tool1-button">Execute Tool 1</button>
-                </form>
+            <div class="install-container">
+                <h4>Install Required Dependencies for Memory Forensics</h4>
+                <button id="install-dependencies-btn">Install Dependencies</button>
+                <p id="install-status"></p>
             </div>
 
-            <!-- Example: Memory Forensics Tool 2 -->
-            <div class="form-field">
-                <p>Memory Forensics Tool 2</p> 
-                <form id="tool2-form" action="/execute" method="POST">
-                    <input type="hidden" name="action" value="tool2">
-                    <!-- Add any tool-specific input fields here -->
-                    <button type="submit" id="tool2-button">Execute Tool 2</button>
-                </form>
-            </div>
+            <h4>Upload Memory Dump</h4>
+            <form id="memory-upload-form" action="/memory_upload" method="POST" enctype="multipart/form-data">
+                <input type="file" name="file" accept=".mem,.dump">
+                <button type="submit" id="file-upload-button">Upload Memory Dump</button>
+            </form>
 
-            <!-- Add more memory forensics tools as needed -->
+            <div id="upload-banner" style="display: none;">
+                Memory dump uploaded successfully
+            </div>
+             
+            <!-- Add your memory forensic tool forms and buttons here -->
             
+        <div class="form-field">
+        <p>Get information on the provided memory image (imageinfo)</p>  
+        <form id="mem-image-info-form" action="/memory_tools" method="POST">
+            <input type="hidden" name="action" value="memimageinfo">
+            <button type="submit" id="mem-image-info-button">Memory Dump Information</button>
+        </form>
         </div>
-
-        <div id="output-container" class="output-container"></div>
+        
+   	<div class="form-field">
+    <p>Enter a profile</p>  
+    <form id="profile-form" method="POST">
+        <input type="text" name="profile" id="profile-input" required>
+        <button type="submit" id="set-profile-button">Set Profile</button>
+    </form>
+    <div id="success-banner" style="display: none; background-color: lightgreen; padding: 10px;">
+        Profile set successfully!
     </div>
+</div>
+        
+        <div class="form-field">
+        <p>View all registry keys (printkey)</p>  
+        <form id="print-keys-form" action="/memory_tools" method="POST">
+            <input type="hidden" name="action" value="printkey">
+            <!--<label for="offset">Profile:</label>
+            <input type="text" id="profile" name="profile" required> -->
+            <button type="submit" id="print-keys-button">Display Registry Keys</button>
+        </form>
+        </div>
+        
+        <div class="form-field">
+        <p>View all network connections (netscan)</p>  
+        <form id="netscan-form" action="/execute" method="POST">
+            <input type="hidden" name="action" value="netscan">
+            <!--<label for="offset">Profile:</label>
+            <input type="text" id="profile" name="profile" required>-->
+            <button type="submit" id="netscan-button">Display Network Connections</button>
+        </form>
+        </div>
+        
+        <div class="form-field">
+        <p>View all processes (pslist)</p>  
+        <form id="pslist-form" action="/execute" method="POST">
+            <input type="hidden" name="action" value="pslist">
+            <!--<label for="offset">Profile:</label>
+            <input type="text" id="profile" name="profile" required>-->
+            <button type="submit" id="pslist-button">Display Suspicious Processes</button>
+        </form>
+        </div>
+        
+        <div class="form-field">
+        <p>View hidden processes (psxview)</p>  
+        <form id="psxview-form" action="/execute" method="POST">
+            <input type="hidden" name="action" value="psxview">
+            <!--<label for="offset">Profile:</label>
+            <input type="text" id="profile" name="profile" required>-->
+            <button type="submit" id="psxview-button">Display Hidden Processes</button>
+        </form>
+        </div>
+    
+    
+    	<div class="form-field">
+        <p>Display command line arguments (cmdline)</p>  
+        <form id="cmdline-form" action="/execute" method="POST">
+            <input type="hidden" name="action" value="cmdline">
+            <!--<label for="offset">Profile:</label>
+            <input type="text" id="profile" name="profile" required>-->
+            <button type="submit" id="cmdline-button">Display Command Line Arguments</button>
+        </form>
+        </div>
+    
+                <div class="form-field">
+        <p>Extract password hashes (hashdump)</p>  
+        <form id="hashdump-form" action="/memory_tools" method="POST">
+            <input type="hidden" name="action" value="hashdump">
+            <!-- <label for="offset">Profile:</label>
+            <input type="text" id="profile" name="profile" required> 
+            <label for="offset">System Hive Virtual Address:</label>
+            <input type="text" id="system" name="system" required>
+            <label for="offset">SAM Hive Virtual Address:</label>
+            <input type="text" id="sam" name="sam" required> -->
+            <button type="submit" id="hashdump-button">View Password Hashes</button>
+        </form>
+        </div> 
+        
+        <div class="form-field">
+            <h4>Crack Password</h4>
+            <form id="crack-password-form" action="/memory_tools" method="POST">
+                <input type="hidden" name="action" value="crackpassword">
+                <label for="hash_value">Enter Hash Value:</label>
+                <input type="text" id="hash_value" name="hash_value" required><br><br>
+                <button type="submit" id="crack-password-button">Crack Password</button>
+            </form>
+        </div>      
 
-    <!-- Include any necessary JavaScript for handling form submissions and interactions -->
+   	</div>
+        
+        <div id="output-container">
+            <!-- Output will be displayed here -->
+        </div>
+        
+    </div>
+    
     <script>
+        // JavaScript code for handling memory forensic tools and file uploads
+        // (Similar to the code you provided for storage forensics)
+
+        // You can add memory forensic tool event listeners here
+        
         document.addEventListener('DOMContentLoaded', function () {
-            const backButton = document.getElementById('back-button');
             const outputContainer = document.getElementById('output-container');
+            const uploadBanner = document.getElementById('upload-banner');
+            const installBtn = document.getElementById('install-dependencies-btn');
+            const installStatus = document.getElementById('install-status');
+            const memimageInfoButton = document.getElementById('mem-image-info-button');
+	    const printKeysButton = document.getElementById('print-keys-button');
+	    const successBanner = document.getElementById('success-banner');
+	    const netscanButton = document.getElementById('netscan-button');
+	    const pslistButton = document.getElementById('pslist-button');	
+	    const psxviewButton = document.getElementById('psxview-button');
+	    const hashdumpButton = document.getElementById('hashdump-button');	
+	    const cmdlineButton = document.getElementById('cmdline-button');		
+	    
+	    const memimageInfoForm = document.getElementById('mem-image-info-form');
+            const printKeysForm = document.getElementById('print-keys-form');
+            const profileForm = document.getElementById('profile-form');
+            const netscanForm = document.getElementById('netscan-form');
+            const pslistForm = document.getElementById('pslist-form');
+            const psxviewForm = document.getElementById('psxview-form');
+            const hashdumpForm = document.getElementById('hashdump-form');
+            const crackPasswordForm = document.getElementById('crack-password-form');
+            const cmdlineForm = document.getElementById('cmdline-form');
+    
+            
+            function displayUploadBanner() {
+                uploadBanner.style.display = 'block';
+                setTimeout(function() {
+                    uploadBanner.style.display = 'none';
+                }, 50000); // Hide the banner after 5 seconds (you can adjust the duration).
+            }
+            
+            function displaySuccessBanner() {
+                successBanner.style.display = 'block';
+                setTimeout(function() {
+                    successBanner.style.display = 'none';
+                }, 50000); // Hide the banner after 5 seconds (you can adjust the duration).
+            }
+            
+            function displayOutput(output) {
+                outputContainer.innerHTML = output;
+            }
+            
+            const memoryUploadForm = document.getElementById('memory-upload-form');
+        memoryUploadForm.addEventListener('submit', async function (event) {
+            event.preventDefault(); // Prevent the default form submission
+            const formData = new FormData(memoryUploadForm);
 
-            // Add event listeners to your form fields for executing memory forensics tools
-            // Use JavaScript fetch requests similar to the ones in your storage forensics page to execute tools
-
-            // Example: Execute Tool 1
-            const tool1Form = document.getElementById('tool1-form');
-            tool1Form.addEventListener('submit', function (event) {
-                event.preventDefault();
-                // Make an AJAX request to execute Tool 1
-                // Replace this with the actual fetch request for Tool 1
-                fetch('/execute', {
+            try {
+                const response = await fetch('/memory_upload', {
                     method: 'POST',
-                    body: new FormData(tool1Form),
-                })
-                .then(response => response.text())
-                .then(data => {
-                    displayOutput(data);
-                })
-                .catch(error => {
-                    outputContainer.innerText = 'Error: ' + error.message;
+                    body: formData,
                 });
-            });
 
-            // Example: Execute Tool 2
-            const tool2Form = document.getElementById('tool2-form');
-            tool2Form.addEventListener('submit', function (event) {
-                event.preventDefault();
-                // Make an AJAX request to execute Tool 2
-                // Replace this with the actual fetch request for Tool 2
-                fetch('/execute', {
-                    method: 'POST',
-                    body: new FormData(tool2Form),
-                })
-                .then(response => response.text())
-                .then(data => {
-                    displayOutput(data);
-                })
-                .catch(error => {
-                    outputContainer.innerText = 'Error: ' + error.message;
-                });
-            });
-
-            // Implement similar event listeners for other memory forensics tools as needed
-
-            backButton.addEventListener('click', function () {
-                // Navigate back to the memory forensics page ("/memory_forensics")
-                window.location.href = '/memory_forensics';
-            });
+                if (response.ok) {
+                    // File was successfully uploaded
+                    displayUploadBanner();
+                } else {
+                    // Handle errors here
+                    outputContainer.innerText = 'Error: ' + response.statusText;
+                }
+            } catch (error) {
+                outputContainer.innerText = 'Error: ' + error.message;
+            }
         });
+        
+        
 
-        function displayOutput(output) {
-            outputContainer.innerHTML = output;
-        }
-    </script>
+        installBtn.addEventListener('click', async function () {
+            try {
+                const response = await fetch('/install_dependencies', {
+                    method: 'POST'
+                });
+
+                if (response.ok) {
+                    installStatus.textContent = 'Dependencies installed successfully!';
+                } else {
+                    const errorData = await response.json();
+                    installStatus.textContent = 'Error: ' + errorData.message;
+                }
+            } catch (error) {
+                installStatus.textContent = 'Error: ' + error.message;
+            }
+        });
+        
+        memimageInfoForm.addEventListener('submit', function (event) {
+                event.preventDefault(); // Prevent the default form submission
+
+                // Make an AJAX request to execute the img_stat function
+                fetch('/memory_tools', {
+                    method: 'POST',
+                    body: new FormData(memimageInfoForm),
+                })
+                .then(response => response.text()) // Use text() instead of json()
+                .then(data => {
+                    displayOutput(data);
+                })
+                .catch(error => {
+                    outputContainer.innerText = 'Error: ' + error.message;
+                });
+            });
+            
+            printKeysForm.addEventListener('submit', function (event) {
+                event.preventDefault(); // Prevent the default form submission
+
+                // Make an AJAX request to execute the img_stat function
+                fetch('/memory_tools', {
+                    method: 'POST',
+                    body: new FormData(printKeysForm),
+                })
+                .then(response => response.text()) // Use text() instead of json()
+                .then(data => {
+                    displayOutput(data);
+                })
+                .catch(error => {
+                    outputContainer.innerText = 'Error: ' + error.message;
+                });
+            });
+            
+            profileForm.addEventListener('submit', function (event) {
+        event.preventDefault(); // Prevent the default form submission
+
+        const profileInput = document.getElementById('profile-input').value;
+
+        // Make an AJAX request to set the profile
+        fetch('/set_profile', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/x-www-form-urlencoded'
+            },
+            body: `profile=${profileInput}`
+        })
+        .then(response => {
+            if (response.ok) {
+                // Show the success banner if profile is set successfully
+                displaySuccessBanner();
+                successBanner.style.display = 'block';
+                // Hide the banner after a few seconds (adjust the duration as needed)
+                setTimeout(function() {
+                    successBanner.style.display = 'none';
+                }, 3000); // Hide the banner after 3 seconds
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+        });
+    });
+    
+    netscanForm.addEventListener('submit', function (event) {
+                event.preventDefault(); // Prevent the default form submission
+
+                // Make an AJAX request to execute the img_stat function
+                fetch('/memory_tools', {
+                    method: 'POST',
+                    body: new FormData(netscanForm),
+                })
+                .then(response => response.text()) // Use text() instead of json()
+                .then(data => {
+                    displayOutput(data);
+                })
+                .catch(error => {
+                    outputContainer.innerText = 'Error: ' + error.message;
+                });
+            });
+            
+            pslistForm.addEventListener('submit', function (event) {
+                event.preventDefault(); // Prevent the default form submission
+
+                // Make an AJAX request to execute the img_stat function
+                fetch('/memory_tools', {
+                    method: 'POST',
+                    body: new FormData(pslistForm),
+                })
+                .then(response => response.text()) // Use text() instead of json()
+                .then(data => {
+                    displayOutput(data);
+                })
+                .catch(error => {
+                    outputContainer.innerText = 'Error: ' + error.message;
+                });
+            });
+            
+            psxviewForm.addEventListener('submit', function (event) {
+                event.preventDefault(); // Prevent the default form submission
+
+                // Make an AJAX request to execute the img_stat function
+                fetch('/memory_tools', {
+                    method: 'POST',
+                    body: new FormData(psxviewForm),
+                })
+                .then(response => response.text()) // Use text() instead of json()
+                .then(data => {
+                    displayOutput(data);
+                })
+                .catch(error => {
+                    outputContainer.innerText = 'Error: ' + error.message;
+                });
+            });
+            
+            cmdlineForm.addEventListener('submit', function (event) {
+                event.preventDefault(); // Prevent the default form submission
+
+                // Make an AJAX request to execute the img_stat function
+                fetch('/memory_tools', {
+                    method: 'POST',
+                    body: new FormData(cmdlineForm),
+                })
+                .then(response => response.text()) // Use text() instead of json()
+                .then(data => {
+                    displayOutput(data);
+                })
+                .catch(error => {
+                    outputContainer.innerText = 'Error: ' + error.message;
+                });
+            });
+            
+            hashdumpForm.addEventListener('submit', function (event) {
+                event.preventDefault(); // Prevent the default form submission
+
+                // Make an AJAX request to execute the img_stat function
+                fetch('/memory_tools', {
+                    method: 'POST',
+                    body: new FormData(hashdumpForm),
+                })
+                .then(response => response.text()) // Use text() instead of json()
+                .then(data => {
+                    displayOutput(data);
+                })
+                .catch(error => {
+                    outputContainer.innerText = 'Error: ' + error.message;
+                });
+            });
+            
+            crackPasswordForm.addEventListener('submit', function (event) {
+                event.preventDefault(); // Prevent the default form submission
+
+                const formData = new FormData(crackPasswordForm);
+
+                fetch('/memory_tools', {
+                    method: 'POST',
+                    body: formData,
+                })
+                .then(response => response.text())
+                .then(data => {
+                    displayOutput(data); // Display output in the output container
+                })
+                .catch(error => {
+                    outputContainer.innerText = 'Error: ' + error.message;
+                });
+            });
+
+        
+});
+</script>
 </body>
 </html>

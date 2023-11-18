@@ -4,6 +4,8 @@ import os
 
 app = Flask(__name__)
 
+mem_address = "" 
+
 @app.route('/')
 def choose_forensics():
     return render_template('choose_forensics.html')
@@ -13,32 +15,13 @@ def storage_forensics():
     if request.method == 'POST':
         return redirect(url_for('storage_forensics'))
     return render_template('index.html')
-
+    
 @app.route('/memory_forensics', methods=['GET', 'POST'])
 def memory_forensics():
-    if request.method == 'POST':
-        return redirect(url_for('memory_tools'))
     return render_template('memory_tools.html')
 
-@app.route('/memory_tools', methods=['GET', 'POST'])
-def memory_tools():
-    # This route will handle memory forensics tool actions
-    if request.method == 'POST':
-        # Add code here to process the memory forensics tool actions
-        # You can use request.form to access form data
-        # For example:
-        action = request.form.get('action')
-        if action == 'tool1':
-            # Code to execute tool 1
-            pass
-        elif action == 'tool2':
-            # Code to execute tool 2
-            pass
-        # You can add more conditions for other tools as needed
-    return render_template('memory_tools.html')  # Render the memory tools page
 
-    
-@app.route('/home',methods=['POST'])	
+@app.route('/storage_upload',methods=['POST'])	
 def upload_file():
 	global fileaddress
 	uploaded_file = request.files['file']
@@ -46,13 +29,190 @@ def upload_file():
 		upload_dir = 'Image'
 		os.makedirs(upload_dir, exist_ok=True)
 		file_address = os.path.join(upload_dir,uploaded_file.filename)
-		fileaddress=file_address
+		fileaddress = file_address
 		uploaded_file.save(file_address)
 		with open('file_address.txt','w') as file:
 			file.write(file_address)
 			return 'File uploaded successfully!'
 	else:
 		return 'No file selected'
+
+@app.route('/install_dependencies', methods=['POST'])
+def install_dependencies():
+    try:
+        # Your installation script commands
+        commands = [
+            "wget https://bootstrap.pypa.io/pip/2.7/get-pip.py",
+            "sudo python2 get-pip.py",
+            "pip2 install --upgrade setuptools",
+            "sudo apt-get install python2-dev",
+            "pip2 install pycrypto",
+            "pip2 install distorm3",
+            "git clone https://github.com/volatilityfoundation/volatility.git /opt/volatility"
+        ]
+
+        # Run the installation commands one by one
+        for command in commands:
+            try:
+                subprocess.run(command.split(), check=True)
+            except subprocess.CalledProcessError as e:
+                # Handle Git Clone Error
+                if 'destination path' in str(e.output):
+                    continue  # Skip if 'destination path' error
+                else:
+                    return jsonify({'message': f'Error during installation: {e}'})
+        
+        return jsonify({'message': 'Dependencies installed successfully'})
+    except Exception as e:
+        return jsonify({'message': f'Error during installation: {e}'}), 500
+
+
+    
+@app.route('/set_profile',methods=['POST'])
+def set_profile():
+	global profile
+	profile = request.form['profile']
+	return 'Profile Set Successfully'
+
+@app.route('/memory_tools', methods=['GET', 'POST'])
+def memory_tools():
+    global mem_address
+    with open('mem_address.txt', 'r') as file:
+        mem_address = file.read().strip() 
+    output = ""
+    # This route will handle memory forensics tool actions
+    if request.method == 'POST':
+        # Add code here to process the memory forensics tool actions
+        # You can use request.form to access form data
+        # For example:
+        action = request.form.get('action')
+
+        if action == 'memimageinfo':
+            # Logic to handle 'memimageinfo' action
+            command = ["python2", "/opt/volatility/vol.py", "-f", mem_address, "imageinfo"]
+            try:
+                output = subprocess.check_output(command, stderr=subprocess.STDOUT, text=True)
+                # Wrap the output in <pre> tags and replace newlines with <br> tags
+                output = '<pre>' + output.replace('\n', '<br>') + '</pre>'
+                return output
+            except subprocess.CalledProcessError as e:
+                # Handle errors here, for example:
+                return jsonify(error="An error occurred during imageinfo execution.")
+
+        if action == 'printkey':
+            # Logic to handle 'printkey' action (displaying registry keys)
+            # profile = request.form.get('profile')
+            # Add logic to display registry keys using the provided profile
+            command = ['python2', '/opt/volatility/vol.py', '-f', mem_address, '--profile='+profile,'printkey']
+            try:
+                output = subprocess.check_output(command, stderr=subprocess.STDOUT, text=True)
+                # Wrap the output in <pre> tags and replace newlines with <br> tags
+                output = '<pre>' + output.replace('\n', '<br>') + '</pre>'
+                return output
+            except subprocess.CalledProcessError as e:
+                # Handle errors here, for example:
+                print(e.cmd, e.output)
+                return jsonify(error="An error occurred during printkey execution.")
+
+        if action == 'netscan':
+            command = ['python2', '/opt/volatility/vol.py', '-f', mem_address, '--profile='+profile,'netscan']
+            try:
+                output = subprocess.check_output(command, stderr=subprocess.STDOUT, text=True)
+                # Wrap the output in <pre> tags and replace newlines with <br> tags
+                output = '<pre>' + output.replace('\n', '<br>') + '</pre>'
+                return output
+            except subprocess.CalledProcessError as e:
+                # Handle errors here, for example:
+                print(e.cmd, e.output)
+                return jsonify(error="An error occurred during netscan execution.")
+                
+        if action == 'pslist':
+            command = ['python2', '/opt/volatility/vol.py', '-f', mem_address, '--profile='+profile,'pslist']
+            try:
+                output = subprocess.check_output(command, stderr=subprocess.STDOUT, text=True)
+                # Wrap the output in <pre> tags and replace newlines with <br> tags
+                output = '<pre>' + output.replace('\n', '<br>') + '</pre>'
+                return output
+            except subprocess.CalledProcessError as e:
+                # Handle errors here, for example:
+                print(e.cmd, e.output)
+                return jsonify(error="An error occurred during pslist execution.")
+                
+        if action == 'psxview':
+            command = ['python2', '/opt/volatility/vol.py', '-f', mem_address, '--profile='+profile,'psxview']
+            try:
+                output = subprocess.check_output(command, stderr=subprocess.STDOUT, text=True)
+                # Wrap the output in <pre> tags and replace newlines with <br> tags
+                output = '<pre>' + output.replace('\n', '<br>') + '</pre>'
+                return output
+            except subprocess.CalledProcessError as e:
+                # Handle errors here, for example:
+                print(e.cmd, e.output)
+                return jsonify(error="An error occurred during psxview execution.")
+        
+        if action == 'hashdump':
+            command = ['python2', '/opt/volatility/vol.py', '-f', mem_address, '--profile='+profile, 'hashdump']
+            try:
+                output = subprocess.check_output(command, stderr=subprocess.STDOUT, text=True)
+                # Wrap the output in <pre> tags and replace newlines with <br> tags
+                output = '<pre>' + output.replace('\n', '<br>') + '</pre>'
+                return output
+            except subprocess.CalledProcessError as e:
+                # Handle errors here, for example:
+                print(e.cmd, e.output)
+                return jsonify(error="An error occurred during psxview execution.")
+               
+        if action == 'crackpassword':
+            hash_value = request.form['hash_value']  # Get the hash value from the form
+            with open('hash.txt', 'w') as hash_file:
+                hash_file.write(hash_value)
+            command = ['hashcat', '-m', '1000', '-a', '0', 'hash.txt', 'rockyou.txt','--potfile-disable']
+            try:
+                output = subprocess.check_output(command, stderr=subprocess.STDOUT, text=True)
+        # Wrap the output in <pre> tags and replace newlines with <br> tags
+                output = '<pre>' + output.replace('\n', '<br>') + '</pre>'
+                return output
+            except subprocess.CalledProcessError as e:
+        # Handle errors here, for example:
+                print(e.cmd, e.output)
+            return jsonify(error="An error occurred during hashcat execution.")
+        
+        if action == 'cmdline':
+            command = ['python2', '/opt/volatility/vol.py', '-f', mem_address, '--profile='+profile,'cmdscan']
+            try:
+                output = subprocess.check_output(command, stderr=subprocess.STDOUT, text=True)
+                # Wrap the output in <pre> tags and replace newlines with <br> tags
+                output = '<pre>' + output.replace('\n', '<br>') + '</pre>'
+                return output
+            except subprocess.CalledProcessError as e:
+                print(e.cmd, e.output)
+                return jsonify(error="An error occurred during cmdline execution.")                
+           
+
+                
+               
+    
+    # Return the appropriate response or render the necessary template
+    return render_template('memory_tools.html', output=output)  # Rendering the memory tools page
+    
+    
+    
+@app.route('/memory_upload',methods=['POST'])	
+def upload_dump():
+	global mem_address
+	uploaded_file = request.files['file']
+	if uploaded_file.filename != '':
+		upload_dir = 'Image'
+		os.makedirs(upload_dir, exist_ok=True)
+		mem_address = os.path.join(upload_dir,uploaded_file.filename)
+		#memaddress=mem_address
+		uploaded_file.save(mem_address)
+		with open('mem_address.txt','w') as file:
+			file.write(mem_address)
+			return 'Memory dump uploaded successfully!'
+	else:
+		return 'No file selected'
+
 
 @app.route('/execute', methods=['POST'])
 
